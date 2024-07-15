@@ -14,6 +14,10 @@ import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+/**
+ * This class reads and writes data to PostgreSQL server.
+ */
+
 @Service
 public class ServerReaderWriter {
 
@@ -48,6 +52,10 @@ public class ServerReaderWriter {
         athleteRepository.save(athlete);
     }
 
+    /**
+     * If a new athlete result is being entered, the method first checks if a result for the same discipline for that athlete already exists.
+     * If it exists, it is updated; if it does not exist, it is inserted.
+     */
     public void writeResult(ResultWithScore result) {
         List<ResultWithScore> resultWithScores = resultWithScoreRepository.findByAthlete_UuidAndDiscipline(result.getAthlete().getUuid(), result.getDiscipline());
         if (resultWithScores.isEmpty()) {
@@ -65,6 +73,10 @@ public class ServerReaderWriter {
         List<Integer> score = resultWithScoreRepository.findScoreByAthlete_Uuid(athleteUuid);
         return score.stream().mapToInt(Integer::intValue).sum();
     }
+
+    /**
+     * Sorts the athletes based on their score for a single discipline or for their total score.
+     */
 
     public List<ResultWithScore> readTopAthletes(String discipline, String country) {
         List<ResultWithScore> topAthletes = new ArrayList<>();

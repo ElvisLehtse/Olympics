@@ -5,6 +5,11 @@ import com.Elvis.olympics.model.ResultWithScore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * Calculates the score of the discipline based on the athlete's result. This is an example, since the
+ * score calculator does not use correct formulas.
+ */
+
 @Service
 public class ScoreCalculator {
 

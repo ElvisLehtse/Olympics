@@ -10,6 +10,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * This class receives requests, calls for relevant data to be written into PostgreSQL server
+ * and returns a reply to be displayed to the end-user.
+ */
+
 @RestController
 @CrossOrigin("http://localhost:3000")
 public class RequestHandler {
