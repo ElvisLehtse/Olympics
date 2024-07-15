@@ -9,7 +9,7 @@ Setup:
    For Unix systems: ./mvnw clean install  
    For Windows: mvnw.cmd clean install  
 6) Run the application by typing:  
-   mvn spring-boot:run  
+   ./mvnw spring-boot:run  
 7) Start the react application by opening the terminal window inside olympics-front folder and typing:  
    npm start  
 8) Your default browser should open automatically with the application running.  
