@@ -112,25 +112,25 @@ function App() {
           <div className="form-group">
             <label htmlFor="firstname">First name:</label>
             <div className="col-sm-5">
-              <input onChange={(e) => {onInputChange(e)}} type="text" id="firstname" name="firstname" placeholder="first name" className="form-control"></input>
+              <input onChange={onInputChange} type="text" id="firstname" name="firstname" placeholder="first name" className="form-control"></input>
             </div>
           </div>
           <div className="form-group">
             <label htmlFor="lastname">Last name:</label>
             <div className="col-sm-5">
-              <input onChange={(e) => {onInputChange(e)}} type="text" id="lastname" name="lastname" placeholder="last name" className="form-control"></input>
+              <input onChange={onInputChange} type="text" id="lastname" name="lastname" placeholder="last name" className="form-control"></input>
             </div>
           </div>
           <div className="form-group">
             <label htmlFor="age">Age:</label>
             <div className="col-sm-2">
-              <input onChange={(e) => {onInputChange(e)}} type="number" id="age" name="age" placeholder="age" className="form-control"></input>
+              <input onChange={onInputChange} type="number" id="age" name="age" placeholder="age" className="form-control"></input>
             </div>
           </div>
           <div className="from-group">
             <div className="col-sm-2">
               <label htmlFor="country" className="form-label">Country</label>
-              <select onChange={(e) => {onInputChange(e)}} type="text" id="country" name="country" className="form-select">
+              <select onChange={onInputChange} type="text" id="country" name="country" className="form-select">
                 {countries.map(country => <option key={country}>{country}</option>)}
               </select>
             </div>
@@ -144,7 +144,7 @@ function App() {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="athlete" className="form-label">Select an athlete:</label>
-              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="athlete" id="athlete">
+              <select onChange={onInputChange} className="form-select" name="athlete" id="athlete">
                 {athletes.map(athlete => <option key={athlete.uuid} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
               </select>
             </div>
@@ -152,7 +152,7 @@ function App() {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="discipline" className="form-label">Select a discipline:</label>
-              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="discipline" id="discipline">
+              <select onChange={onInputChange} className="form-select" name="discipline" id="discipline">
                 {disciplines.map(discipline => <option key={discipline}>{discipline}</option>)}
               </select>
             </div>
@@ -160,7 +160,7 @@ function App() {
           <div className="form-group">
             <label htmlFor="result">Result:</label>
             <div className="col-sm-2">
-              <input onChange={(e) => {onInputChange(e)}} type="number" id="result" name="result" placeholder="result" className="form-control"></input>
+              <input onChange={onInputChange} type="number" id="result" name="result" placeholder="result" className="form-control"></input>
             </div>
           </div>
           <button type="submit" className="btn btn-primary mt-3">Submit</button>
@@ -172,7 +172,7 @@ function App() {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="athlete" className="form-label">Select an athlete:</label>
-              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="getAthlete" id="getAthlete">
+              <select onChange={onInputChange} className="form-select" name="getAthlete" id="getAthlete">
                 {athletes.map(athlete => <option key={athlete.uuid} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
               </select>
             </div>
@@ -192,7 +192,7 @@ function App() {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="total" className="form-label">Sort by:</label>
-              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="disciplineForTopAthletes" id="disciplineForTopAthletes">
+              <select onChange={onInputChange} className="form-select" name="disciplineForTopAthletes" id="disciplineForTopAthletes">
                 {disciplinesAndTotal.map(total => <option key={total}>{total}</option>)}
               </select>
             </div>
@@ -200,7 +200,7 @@ function App() {
           <div className="from-group">
             <div className="col-sm-2">
               <label htmlFor="country" className="form-label">Filter by country</label>
-              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="countryForTopAthletes" id="countryForTopAthletes">
+              <select onChange={onInputChange} className="form-select" name="countryForTopAthletes" id="countryForTopAthletes">
                 {countriesFilter.map(country => <option key={country}>{country}</option>)}
               </select>
             </div>
