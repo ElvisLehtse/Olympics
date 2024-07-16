@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 function App() {
   const[responseAthlete, setResponseAthlete] = useState([]);
@@ -12,6 +12,9 @@ function App() {
   const[disciplines, setDisciplines] = useState([]);
   const[responseScore, setResponseScore] = useState("");
   const[disciplinesAndTotal, setDisciplinesAndTotal] = useState([]);
+
+  const[formData, setFormData] = useState([]);
+  const countryRef = useRef();
 
   useEffect(() => {
     fetch("http://localhost:8080/countries")
@@ -29,18 +32,22 @@ function App() {
     getAthletes();
   }, [])
 
+  // This function stores each change made, character by character, into the formData when a form is being filled
+  // When the form is being submitted, the required values can be read by calling the corresponding names
+  function onInputChange(e) {
+    setFormData(prev => ({...prev, [e.target.name]: e.target.value,}));
+  }
+
   function setAthlete(event) {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const payload = Object.fromEntries(formData);
-    fetch("http://localhost:8080/registration?firstname=" + payload.firstname + "&lastname=" + 
-      payload.lastname+ "&age=" + payload.age + "&country=" + payload.country, {method: "POST"}) 
+    const country = countryRef.current.value;
+    fetch("http://localhost:8080/registration?firstname=" + formData.firstname + "&lastname=" + 
+      formData.lastname + "&age=" + formData.age + "&country=" + country, {method: "POST"}) 
     .then(res => res.text())
     .then(body => {
       setResponseAthlete(body)
       getAthletes();
     });
-    
   }
 
   function getAthletes() {
@@ -89,30 +96,30 @@ function App() {
           <div className="form-group">
             <label htmlFor="firstname">First name:</label>
             <div className="col-sm-5">
-              <input type="text" id="firstname" name="firstname" placeholder="first name" className="form-control"></input>
+              <input onChange={(e) => {onInputChange(e)}} type="text" id="firstname" name="firstname" placeholder="first name" className="form-control"></input>
             </div>
           </div>
           <div className="form-group">
             <label htmlFor="lastname">Last name:</label>
             <div className="col-sm-5">
-              <input type="text" id="lastname" name="lastname" placeholder="last name" className="form-control"></input>
+              <input onChange={(e) => {onInputChange(e)}} type="text" id="lastname" name="lastname" placeholder="last name" className="form-control"></input>
             </div>
           </div>
           <div className="form-group">
             <label htmlFor="age">Age:</label>
             <div className="col-sm-2">
-              <input type="number" id="age" name="age" placeholder="age" className="form-control"></input>
+              <input onChange={(e) => {onInputChange(e)}} type="number" id="age" name="age" placeholder="age" className="form-control"></input>
             </div>
           </div>
           <div className="from-group">
             <div className="col-sm-2">
               <label htmlFor="country" className="form-label">Country</label>
-              <select className="form-select" name="country" id="country">
+              <select ref={countryRef} type="text" id="country" name="country" className="form-select">
                 {countries.map(country => <option key={country}>{country}</option>)}
               </select>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary mt-3"Submit>Submit</button>
+          <button type="submit" className="btn btn-primary mt-3">Submit</button>
           <br/><span> {responseAthlete} </span>
         </form><br/>
 
@@ -140,7 +147,7 @@ function App() {
               <input type="number" id="result" name="result" placeholder="result" className="form-control"></input>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary mt-3"Submit>Submit</button>
+          <button type="submit" className="btn btn-primary mt-3">Submit</button>
           <br/><span> {responseResult} </span>
         </form><br/>
 
@@ -150,11 +157,11 @@ function App() {
             <div className="col-sm-5">
               <label htmlFor="athlete" className="form-label">Select an athlete:</label>
               <select className="form-select" name="athlete" id="athlete">
-                {athletes.map(athlete => <option key={athlete} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
+                {athletes.map(athlete => <option key={athlete.uuid} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
               </select>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary mt-3"Submit>Submit</button>
+          <button type="submit" className="btn btn-primary mt-3">Submit</button>
         </form>
         {athleteResults.length !== 0 &&
         <div>
@@ -182,10 +189,9 @@ function App() {
               </select>
             </div>
           </div>
-          <button type="submit" className="btn btn-primary mt-3"Submit>Submit</button>
-        </form>
-        <br/>
-
+          <button type="submit" className="btn btn-primary mt-3">Submit</button>
+        </form><br/>
+        
         {topAthletes.length !== 0 &&
           <div>
             <br/><span>List of top Athletes for {topAthletes[0].discipline}:</span><br/>
