@@ -1,5 +1,5 @@
 import './App.css';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 function App() {
   const[responseAthlete, setResponseAthlete] = useState([]);
@@ -14,35 +14,60 @@ function App() {
   const[disciplinesAndTotal, setDisciplinesAndTotal] = useState([]);
 
   const[formData, setFormData] = useState([]);
-  const countryRef = useRef();
 
+  // When the browser is first loaded, all necessary data is loaded from the server
+  // initial selections of drop-down menus are inserted into formData
   useEffect(() => {
     fetch("http://localhost:8080/countries")
     .then(res => res.json())
-    .then(body => setCountries(body));
+    .then(body => {
+      setCountries(body)
+      setFormData(prev => ({...prev, "country": body[0]}))
+    });
     fetch("http://localhost:8080/disciplines")
     .then(res => res.json())
-    .then(body => setDisciplines(body));
+    .then(body => {
+      setDisciplines(body)
+      setFormData(prev => ({...prev, "discipline": body[0]}))
+    });
     fetch("http://localhost:8080/disciplinesAndTotal")
     .then(res => res.json())
-    .then(body => setDisciplinesAndTotal(body));
+    .then(body => {
+      setDisciplinesAndTotal(body)
+      setFormData(prev => ({...prev, "disciplineForTopAthletes": body[0]}))
+    });
     fetch("http://localhost:8080/countriesFilter")
     .then(res => res.json())
-    .then(body => setCountriesFilter(body));
+    .then(body => {
+      setCountriesFilter(body)
+      setFormData(prev => ({...prev, "countryForTopAthletes": body[0]}))
+    });
     getAthletes();
   }, [])
 
   // This function stores each change made, character by character, into the formData when a form is being filled
   // When the form is being submitted, the required values can be read by calling the corresponding names
   function onInputChange(e) {
-    setFormData(prev => ({...prev, [e.target.name]: e.target.value,}));
+    setFormData(prev => ({...prev, [e.target.name]: e.target.value}));
+    //console.log(formData) <--- Use for troubleshooting
   }
 
+  // Fetches the latest list of athletes
+  function getAthletes() {
+    fetch("http://localhost:8080/athletes")
+    .then(res => res.json())
+    .then(body => {
+      setAthletes(body)
+      setFormData(prev => ({...prev, "athlete": body[0].uuid}))
+      setFormData(prev => ({...prev, "getAthlete": body[0].uuid}))
+    });
+  }
+
+  // Sends a new athlete to back-end and calls for an update on the list
   function setAthlete(event) {
     event.preventDefault();
-    const country = countryRef.current.value;
     fetch("http://localhost:8080/registration?firstname=" + formData.firstname + "&lastname=" + 
-      formData.lastname + "&age=" + formData.age + "&country=" + country, {method: "POST"}) 
+      formData.lastname + "&age=" + formData.age + "&country=" + formData.country, {method: "POST"}) 
     .then(res => res.text())
     .then(body => {
       setResponseAthlete(body)
@@ -50,39 +75,30 @@ function App() {
     });
   }
 
-  function getAthletes() {
-    fetch("http://localhost:8080/athletes")
-    .then(res => res.json())
-    .then(body => setAthletes(body));
-  }
-
+  // Sends a new result to back-end
   function setResult(event) {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const payload = Object.fromEntries(formData);
-    fetch("http://localhost:8080/setResults?athlete=" + payload.athlete + "&discipline=" + 
-      payload.discipline + "&result=" + payload.result, {method: "POST"})
+    fetch("http://localhost:8080/setResults?athlete=" + formData.athlete + "&discipline=" + 
+      formData.discipline + "&result=" + formData.result, {method: "POST"})
     .then(res => res.text())
     .then(body => setResponseResult(body));
   }
 
+  // Fetches the results and scores of an athlete
   function getResults(event) {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const payload = Object.fromEntries(formData);
-    fetch("http://localhost:8080/getResults?athlete=" + payload.athlete)
+    fetch("http://localhost:8080/getResults?athlete=" + formData.getAthlete)
     .then(res => res.json())
     .then(body => setAthleteResults(body));
-    fetch("http://localhost:8080/getScore?athlete=" + payload.athlete)
+    fetch("http://localhost:8080/getScore?athlete=" + formData.getAthlete)
     .then(res => res.json())
     .then(body => setResponseScore(body));
   }
 
+  // Fetches the sorted list of athletes for the specified discipline
   function getTopAthletes(event) {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const payload = Object.fromEntries(formData);
-    fetch("http://localhost:8080/getTopAthletes?discipline=" + payload.total + "&country=" + payload.country)
+    fetch("http://localhost:8080/getTopAthletes?discipline=" + formData.disciplineForTopAthletes + "&country=" + formData.countryForTopAthletes)
     .then(res => res.json())
     .then(body => setTopAthletes(body));
   }
@@ -114,7 +130,7 @@ function App() {
           <div className="from-group">
             <div className="col-sm-2">
               <label htmlFor="country" className="form-label">Country</label>
-              <select ref={countryRef} type="text" id="country" name="country" className="form-select">
+              <select onChange={(e) => {onInputChange(e)}} type="text" id="country" name="country" className="form-select">
                 {countries.map(country => <option key={country}>{country}</option>)}
               </select>
             </div>
@@ -128,7 +144,7 @@ function App() {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="athlete" className="form-label">Select an athlete:</label>
-              <select className="form-select" name="athlete" id="athlete">
+              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="athlete" id="athlete">
                 {athletes.map(athlete => <option key={athlete.uuid} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
               </select>
             </div>
@@ -136,7 +152,7 @@ function App() {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="discipline" className="form-label">Select a discipline:</label>
-              <select className="form-select" name="discipline" id="discipline">
+              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="discipline" id="discipline">
                 {disciplines.map(discipline => <option key={discipline}>{discipline}</option>)}
               </select>
             </div>
@@ -144,7 +160,7 @@ function App() {
           <div className="form-group">
             <label htmlFor="result">Result:</label>
             <div className="col-sm-2">
-              <input type="number" id="result" name="result" placeholder="result" className="form-control"></input>
+              <input onChange={(e) => {onInputChange(e)}} type="number" id="result" name="result" placeholder="result" className="form-control"></input>
             </div>
           </div>
           <button type="submit" className="btn btn-primary mt-3">Submit</button>
@@ -156,7 +172,7 @@ function App() {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="athlete" className="form-label">Select an athlete:</label>
-              <select className="form-select" name="athlete" id="athlete">
+              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="getAthlete" id="getAthlete">
                 {athletes.map(athlete => <option key={athlete.uuid} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
               </select>
             </div>
@@ -176,7 +192,7 @@ function App() {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="total" className="form-label">Sort by:</label>
-              <select className="form-select" name="total" id="total">
+              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="disciplineForTopAthletes" id="disciplineForTopAthletes">
                 {disciplinesAndTotal.map(total => <option key={total}>{total}</option>)}
               </select>
             </div>
@@ -184,7 +200,7 @@ function App() {
           <div className="from-group">
             <div className="col-sm-2">
               <label htmlFor="country" className="form-label">Filter by country</label>
-              <select className="form-select" name="country" id="country">
+              <select onChange={(e) => {onInputChange(e)}} className="form-select" name="countryForTopAthletes" id="countryForTopAthletes">
                 {countriesFilter.map(country => <option key={country}>{country}</option>)}
               </select>
             </div>
