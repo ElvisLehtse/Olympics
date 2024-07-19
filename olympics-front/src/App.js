@@ -60,7 +60,7 @@ useEffect((apiEndpoint, key) => {
   // This function stores each change made, character by character, into the formData when a form is being filled
   // When the form is being submitted, the required values can be read by calling the corresponding names
   function onInputChange(e) {
-    setFormData(prev => ({...prev, [e.target.name]: e.target.value}));
+    setFormData(prev => ({...prev, [e.target.id]: e.target.value}));
     console.log(formData);
   }
 
@@ -123,25 +123,25 @@ useEffect((apiEndpoint, key) => {
           <div className="form-group">
             <label htmlFor="firstname">First name:</label>
             <div className="col-sm-5">
-              <input onChange={onInputChange} type="text" id="firstname" name="firstname" placeholder="first name" className="form-control"></input>
+              <input onChange={onInputChange} type="text" id="firstname" placeholder="first name" className="form-control"></input>
             </div>
           </div>
           <div className="form-group">
             <label htmlFor="lastname">Last name:</label>
             <div className="col-sm-5">
-              <input onChange={onInputChange} type="text" id="lastname" name="lastname" placeholder="last name" className="form-control"></input>
+              <input onChange={onInputChange} type="text" id="lastname" placeholder="last name" className="form-control"></input>
             </div>
           </div>
           <div className="form-group">
             <label htmlFor="age">Age:</label>
             <div className="col-sm-2">
-              <input onChange={onInputChange} type="number" id="age" name="age" placeholder="age" className="form-control"></input>
+              <input onChange={onInputChange} type="number" id="age" placeholder="age" className="form-control"></input>
             </div>
           </div>
           <div className="from-group">
             <div className="col-sm-2">
               <label htmlFor="country" className="form-label">Country</label>
-              <select onChange={onInputChange} type="text" id="country" name="country" className="form-select">
+              <select onChange={onInputChange} type="text" id="country" className="form-select">
                 {countries.map(country => <option key={country}>{country}</option>)}
               </select>
             </div>
@@ -155,7 +155,7 @@ useEffect((apiEndpoint, key) => {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="athlete" className="form-label">Select an athlete:</label>
-              <select onChange={onInputChange} className="form-select" name="athlete" id="athlete">
+              <select onChange={onInputChange} className="form-select" id="athlete">
                 {athletes.map(athlete => <option key={athlete.uuid} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
               </select>
             </div>
@@ -163,7 +163,7 @@ useEffect((apiEndpoint, key) => {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="discipline" className="form-label">Select a discipline:</label>
-              <select onChange={onInputChange} className="form-select" name="discipline" id="discipline">
+              <select onChange={onInputChange} className="form-select" id="discipline">
                 {disciplines.map(discipline => <option key={discipline}>{discipline}</option>)}
               </select>
             </div>
@@ -171,7 +171,7 @@ useEffect((apiEndpoint, key) => {
           <div className="form-group">
             <label htmlFor="result">Result:</label>
             <div className="col-sm-2">
-              <input onChange={onInputChange} type="number" id="result" name="result" placeholder="result" className="form-control"></input>
+              <input onChange={onInputChange} type="number" id="result" placeholder="result" className="form-control"></input>
             </div>
           </div>
           <button type="submit" className="btn btn-primary mt-3">Submit</button>
@@ -183,7 +183,7 @@ useEffect((apiEndpoint, key) => {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="athlete" className="form-label">Select an athlete:</label>
-              <select onChange={onInputChange} className="form-select" name="getAthlete" id="getAthlete">
+              <select onChange={onInputChange} className="form-select" id="getAthlete">
                 {athletes.map(athlete => <option key={athlete.uuid} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
               </select>
             </div>
@@ -203,7 +203,7 @@ useEffect((apiEndpoint, key) => {
           <div className="form-group">
             <div className="col-sm-5">
               <label htmlFor="total" className="form-label">Sort by:</label>
-              <select onChange={onInputChange} className="form-select" name="disciplineForTopAthletes" id="disciplineForTopAthletes">
+              <select onChange={onInputChange} className="form-select" id="disciplineForTopAthletes">
                 {disciplinesAndTotal.map(total => <option key={total}>{total}</option>)}
               </select>
             </div>
@@ -211,7 +211,7 @@ useEffect((apiEndpoint, key) => {
           <div className="from-group">
             <div className="col-sm-2">
               <label htmlFor="country" className="form-label">Filter by country</label>
-              <select onChange={onInputChange} className="form-select" name="countryForTopAthletes" id="countryForTopAthletes">
+              <select onChange={onInputChange} className="form-select" id="countryForTopAthletes">
                 {countriesFilter.map(country => <option key={country}>{country}</option>)}
               </select>
             </div>
