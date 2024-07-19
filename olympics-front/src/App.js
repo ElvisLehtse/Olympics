@@ -14,9 +14,21 @@ function App() {
   const[disciplinesAndTotal, setDisciplinesAndTotal] = useState([]);
 
   const[formData, setFormData] = useState([]);
+ // const[data, setData] = useState([]);
 
   // When the browser is first loaded, all necessary data is loaded from the server
   // initial selections of drop-down menus are inserted into formData
+
+  // Rakendada sellist varianti?
+  /*
+useEffect((apiEndpoint, key) => {
+  fetch("http://localhost:8080/" + apiEndpoint)
+  .then(res => res.json())
+  .then(body => {
+    setData({key: body});
+    setFormData(prev => ({...prev, key: body[0]}))
+})*/
+
   useEffect(() => {
     fetch("http://localhost:8080/countries")
     .then(res => res.json())
@@ -49,7 +61,7 @@ function App() {
   // When the form is being submitted, the required values can be read by calling the corresponding names
   function onInputChange(e) {
     setFormData(prev => ({...prev, [e.target.name]: e.target.value}));
-    //console.log(formData) <--- Use for troubleshooting
+    console.log(formData);
   }
 
   // Fetches the latest list of athletes
@@ -102,11 +114,10 @@ function App() {
     .then(res => res.json())
     .then(body => setTopAthletes(body));
   }
-
   return (
    <div className="App">
     <div className="container mt-3">
-
+      {/*Loopida läbi sarnased elemendid form-groupis*/}
         <form onSubmit={setAthlete}>
           <h5>Add a new athlete</h5>
           <div className="form-group">
