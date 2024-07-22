@@ -30,30 +30,30 @@ useEffect((apiEndpoint, key) => {
 })*/
 
   useEffect(() => {
-    fetch("http://localhost:8080/countries")
-    .then(res => res.json())
-    .then(body => {
-      setCountries(body)
-      setFormData(prev => ({...prev, "country": body[0]}))
-    });
-    fetch("http://localhost:8080/disciplines")
-    .then(res => res.json())
-    .then(body => {
-      setDisciplines(body)
-      setFormData(prev => ({...prev, "discipline": body[0]}))
-    });
-    fetch("http://localhost:8080/disciplinesAndTotal")
-    .then(res => res.json())
-    .then(body => {
-      setDisciplinesAndTotal(body)
-      setFormData(prev => ({...prev, "disciplineForTopAthletes": body[0]}))
-    });
-    fetch("http://localhost:8080/countriesFilter")
-    .then(res => res.json())
-    .then(body => {
-      setCountriesFilter(body)
-      setFormData(prev => ({...prev, "countryForTopAthletes": body[0]}))
-    });
+    const apiNames = ["country", "discipline", "disciplineForTopAthletes", "countryForTopAthletes"]
+    for (let index = 0; index < apiNames.length; index++) {
+      fetch("http://localhost:8080/" + apiNames[index])
+      .then(res => res.json())
+      .then(body => {
+        switch (apiNames[index]) {
+          case "country":
+            setCountries(body)
+            break;
+          case "discipline":
+            setDisciplines(body)
+            break;
+          case "disciplineForTopAthletes":
+            setDisciplinesAndTotal(body)
+            break;
+          case "countryForTopAthletes":
+            setCountriesFilter(body)
+            break;
+          default:
+            break;
+        }
+      setFormData(prev => ({...prev, [apiNames[index]]: body[0]}));
+      });
+    }
     getAthletes();
   }, [])
 
