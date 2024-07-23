@@ -1,59 +1,37 @@
 import './App.css';
 import { useEffect, useState } from 'react';
+import AthleteRegistraionForm from './components/AthleteRegistraionForm';
+import ResultRegistrationForm from './components/ResultRegistrationForm';
+import ResultViewForm from './components/ResultViewForm';
+import TopAthletesViewForm from './components/TopAthletesViewForm';
 
 function App() {
   const[responseAthlete, setResponseAthlete] = useState([]);
-  const[responseResult, setResponseResult] = useState("");
-  const[athleteResults, setAthleteResults] = useState([]);
-  const[topAthletes, setTopAthletes] = useState([]);
   const[countries, setCountries] = useState([]);
   const[countriesFilter, setCountriesFilter] = useState([]);
   const[athletes, setAthletes] = useState([]);
   const[disciplines, setDisciplines] = useState([]);
-  const[responseScore, setResponseScore] = useState("");
   const[disciplinesAndTotal, setDisciplinesAndTotal] = useState([]);
-
   const[formData, setFormData] = useState([]);
- // const[data, setData] = useState([]);
 
   // When the browser is first loaded, all necessary data is loaded from the server
   // initial selections of drop-down menus are inserted into formData
-
-  // Rakendada sellist varianti?
-  /*
-useEffect((apiEndpoint, key) => {
-  fetch("http://localhost:8080/" + apiEndpoint)
-  .then(res => res.json())
-  .then(body => {
-    setData({key: body});
-    setFormData(prev => ({...prev, key: body[0]}))
-})*/
-
   useEffect(() => {
     const apiNames = ["country", "discipline", "disciplineForTopAthletes", "countryForTopAthletes"]
-    for (let index = 0; index < apiNames.length; index++) {
-      fetch("http://localhost:8080/" + apiNames[index])
+    const setters = {
+      country: setCountries,
+      discipline: setDisciplines,
+      disciplineForTopAthletes: setDisciplinesAndTotal,
+      countryForTopAthletes: setCountriesFilter
+    };
+    apiNames.forEach(apiName => {
+      fetch("http://localhost:8080/" + apiName)
       .then(res => res.json())
       .then(body => {
-        switch (apiNames[index]) {
-          case "country":
-            setCountries(body)
-            break;
-          case "discipline":
-            setDisciplines(body)
-            break;
-          case "disciplineForTopAthletes":
-            setDisciplinesAndTotal(body)
-            break;
-          case "countryForTopAthletes":
-            setCountriesFilter(body)
-            break;
-          default:
-            break;
-        }
-      setFormData(prev => ({...prev, [apiNames[index]]: body[0]}));
+        setters[apiName](body);
+        setFormData(prev => ({...prev, [apiName]: body[0]}));
       });
-    }
+    });
     getAthletes();
   }, [])
 
@@ -86,145 +64,33 @@ useEffect((apiEndpoint, key) => {
       getAthletes();
     });
   }
-
-  // Sends a new result to back-end
-  function setResult(event) {
-    event.preventDefault();
-    fetch("http://localhost:8080/setResults?athlete=" + formData.athlete + "&discipline=" + 
-      formData.discipline + "&result=" + formData.result, {method: "POST"})
-    .then(res => res.text())
-    .then(body => setResponseResult(body));
-  }
-
-  // Fetches the results and scores of an athlete
-  function getResults(event) {
-    event.preventDefault();
-    fetch("http://localhost:8080/getResults?athlete=" + formData.getAthlete)
-    .then(res => res.json())
-    .then(body => setAthleteResults(body));
-    fetch("http://localhost:8080/getScore?athlete=" + formData.getAthlete)
-    .then(res => res.json())
-    .then(body => setResponseScore(body));
-  }
-
-  // Fetches the sorted list of athletes for the specified discipline
-  function getTopAthletes(event) {
-    event.preventDefault();
-    fetch("http://localhost:8080/getTopAthletes?discipline=" + formData.disciplineForTopAthletes + "&country=" + formData.countryForTopAthletes)
-    .then(res => res.json())
-    .then(body => setTopAthletes(body));
-  }
+  
   return (
    <div className="App">
     <div className="container mt-3">
-      {/*Loopida läbi sarnased elemendid form-groupis*/}
-        <form onSubmit={setAthlete}>
-          <h5>Add a new athlete</h5>
-          <div className="form-group">
-            <label htmlFor="firstname">First name:</label>
-            <div className="col-sm-5">
-              <input onChange={onInputChange} type="text" id="firstname" placeholder="first name" className="form-control"></input>
-            </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="lastname">Last name:</label>
-            <div className="col-sm-5">
-              <input onChange={onInputChange} type="text" id="lastname" placeholder="last name" className="form-control"></input>
-            </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="age">Age:</label>
-            <div className="col-sm-2">
-              <input onChange={onInputChange} type="number" id="age" placeholder="age" className="form-control"></input>
-            </div>
-          </div>
-          <div className="from-group">
-            <div className="col-sm-2">
-              <label htmlFor="country" className="form-label">Country</label>
-              <select onChange={onInputChange} type="text" id="country" className="form-select">
-                {countries.map(country => <option key={country}>{country}</option>)}
-              </select>
-            </div>
-          </div>
-          <button type="submit" className="btn btn-primary mt-3">Submit</button>
-          <br/><span> {responseAthlete} </span>
-        </form><br/>
-
-        <form onSubmit={setResult}>
-          <h5>Add results to athletes</h5>
-          <div className="form-group">
-            <div className="col-sm-5">
-              <label htmlFor="athlete" className="form-label">Select an athlete:</label>
-              <select onChange={onInputChange} className="form-select" id="athlete">
-                {athletes.map(athlete => <option key={athlete.uuid} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="form-group">
-            <div className="col-sm-5">
-              <label htmlFor="discipline" className="form-label">Select a discipline:</label>
-              <select onChange={onInputChange} className="form-select" id="discipline">
-                {disciplines.map(discipline => <option key={discipline}>{discipline}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="form-group">
-            <label htmlFor="result">Result:</label>
-            <div className="col-sm-2">
-              <input onChange={onInputChange} type="number" id="result" placeholder="result" className="form-control"></input>
-            </div>
-          </div>
-          <button type="submit" className="btn btn-primary mt-3">Submit</button>
-          <br/><span> {responseResult} </span>
-        </form><br/>
-
-        <form onSubmit={getResults}>
-          <h5>View athletes results</h5>
-          <div className="form-group">
-            <div className="col-sm-5">
-              <label htmlFor="athlete" className="form-label">Select an athlete:</label>
-              <select onChange={onInputChange} className="form-select" id="getAthlete">
-                {athletes.map(athlete => <option key={athlete.uuid} value={athlete.uuid}>{athlete.firstName + " " + athlete.lastName + " (" + athlete.country + ")"}</option>)}
-              </select>
-            </div>
-          </div>
-          <button type="submit" className="btn btn-primary mt-3">Submit</button>
-        </form>
-        {athleteResults.length !== 0 &&
-        <div>
-          <br/><span>List of logged results:</span><br/>
-          <span>{athleteResults.map(athleteResult => <>{"Discipline: " + athleteResult.discipline + " | result: " + athleteResult.result + " | score: " + athleteResult.score}<br/></>)}</span><br/>
-          <span>Total score: {responseScore}</span>
-        </div>
-        }<br/>
-
-        <form onSubmit={getTopAthletes}>
-          <h5>View top Athletes</h5>
-          <div className="form-group">
-            <div className="col-sm-5">
-              <label htmlFor="total" className="form-label">Sort by:</label>
-              <select onChange={onInputChange} className="form-select" id="disciplineForTopAthletes">
-                {disciplinesAndTotal.map(total => <option key={total}>{total}</option>)}
-              </select>
-            </div>
-          </div>
-          <div className="from-group">
-            <div className="col-sm-2">
-              <label htmlFor="country" className="form-label">Filter by country</label>
-              <select onChange={onInputChange} className="form-select" id="countryForTopAthletes">
-                {countriesFilter.map(country => <option key={country}>{country}</option>)}
-              </select>
-            </div>
-          </div>
-          <button type="submit" className="btn btn-primary mt-3">Submit</button>
-        </form><br/>
-        
-        {topAthletes.length !== 0 &&
-          <div>
-            <br/><span>List of top Athletes for {topAthletes[0].discipline}:</span><br/>
-            <span>{topAthletes.map(athletes => <>{athletes.athlete.firstName + " " + athletes.athlete.lastName + " (" + athletes.athlete.country + ") | score: " + athletes.score}<br/></>)}</span><br/>
-          </div>
-        }
+      <AthleteRegistraionForm 
+        setAthlete={setAthlete} 
+        onInputChange={onInputChange} 
+        countries={countries} 
+        responseAthlete={responseAthlete}/>
+      <br/>
+      <ResultRegistrationForm 
+        onInputChange={onInputChange} 
+        athletes={athletes} 
+        disciplines={disciplines} 
+        formData={formData}/>
+      <br/>
+      <ResultViewForm 
+        formData={formData} 
+        onInputChange={onInputChange} 
+        athletes={athletes}/>
+      <br/>
+      <TopAthletesViewForm 
+        formData={formData} 
+        onInputChange={onInputChange} 
+        disciplinesAndTotal={disciplinesAndTotal} 
+        countriesFilter={countriesFilter}/>
+      <br/>
     </div>
    </div>
   );
