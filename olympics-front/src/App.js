@@ -39,7 +39,6 @@ function App() {
   // When the form is being submitted, the required values can be read by calling the corresponding names
   function onInputChange(e) {
     setFormData(prev => ({...prev, [e.target.id]: e.target.value}));
-    console.log(formData);
   }
 
   // Fetches the latest list of athletes
