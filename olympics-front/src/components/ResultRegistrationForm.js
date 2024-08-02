@@ -8,10 +8,14 @@ function ResultRegistrationForm({onInputChange, athletes, disciplines, formData}
   // Sends a new result to back-end
   function setResult(event) {
     event.preventDefault();
-    fetch("http://localhost:8080/setResults?athlete=" + formData.athlete + "&discipline=" + 
-      formData.discipline + "&result=" + formData.result, {method: "POST"})
-    .then(res => res.text())
-    .then(body => setResponseResult(body));
+    if (!formData.result) {
+      setResponseResult("Please insert a result.")
+    } else {
+      fetch("http://localhost:8080/setResults?athlete=" + formData.athlete + "&discipline=" + 
+        formData.discipline + "&result=" + formData.result, {method: "POST"})
+      .then(res => res.text())
+      .then(body => setResponseResult(body));
+    }
   }
 
   return (

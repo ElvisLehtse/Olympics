@@ -55,13 +55,17 @@ function App() {
   // Sends a new athlete to back-end and calls for an update on the list
   function setAthlete(event) {
     event.preventDefault();
-    fetch("http://localhost:8080/registration?firstname=" + formData.firstname + "&lastname=" + 
-      formData.lastname + "&age=" + formData.age + "&country=" + formData.country, {method: "POST"}) 
-    .then(res => res.text())
-    .then(body => {
-      setResponseAthlete(body)
-      getAthletes();
-    });
+    if(!formData.firstname || !formData.lastname || !formData.age) {
+        setResponseAthlete("Please fill all the fields.")
+    } else {
+      fetch("http://localhost:8080/registration?firstname=" + formData.firstname + "&lastname=" + 
+        formData.lastname + "&age=" + formData.age + "&country=" + formData.country, {method: "POST"}) 
+      .then(res => res.text())
+      .then(body => {
+        setResponseAthlete(body)
+        getAthletes();
+      });
+    }
   }
   
   return (
